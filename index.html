@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyStat Perfect Replica</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #000000;
+            --card-bg: #1c1c1e;
+            --modal-bg: #242426;
+            --text-main: #ffffff;
+            --text-gray: #8e8e93;
+            --purple: #5d5dff;
+            --blue: #007aff;
+            --orange: #ff9500;
+            --pink: #ff2d55;
+            --gold: #f1c40f;
+            --red-absent: #452424;
+            --yellow-late: #3d3a22;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding-bottom: 90px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Загальні секції */
+        .section {
+            background: var(--card-bg);
+            margin: 16px;
+            border-radius: 24px;
+            padding: 20px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Шапка */
+        header {
+            padding: 15px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .h-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 20px;
+        }
+
+        .profile-pic {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #333;
+            overflow: hidden;
+        }
+
+        /* Головні картки */
+        .top-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 16px;
+        }
+
+        .t-card {
+            border-radius: 20px;
+            padding: 20px;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .t-card.p {
+            background: var(--purple);
+        }
+
+        .t-card.o {
+            background: #ff453a;
+        }
+
+        .t-card .num {
+            font-size: 46px;
+            font-weight: bold;
+        }
+
+        .t-card .txt {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+
+        /* Оцінки (Повне заповнення) */
+        .month-label {
+            color: var(--text-gray);
+            font-size: 14px;
+            margin: 20px 0 10px;
+        }
+
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .g-box {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        /* Середній бал та Графік */
+        .avg-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .avg-card {
+            background: #252529;
+            padding: 18px;
+            border-radius: 15px;
+            border-left: 4px solid transparent;
+        }
+
+        .avg-num {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .avg-lbl {
+            font-size: 11px;
+            color: var(--text-gray);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .graph-wrap {
+            position: relative;
+            height: 160px;
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .graph-svg {
+            width: 100%;
+            height: 120px;
+        }
+
+        .graph-months {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        /* Відвідуваність */
+        .att-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .att-card {
+            border-radius: 18px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .att-val {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .att-lbl {
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trend-icon {
+            color: #ff3b30;
+            font-size: 14px;
+        }
+
+        .heatmap-wrap {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .h-month {
+            text-align: center;
+        }
+
+        .h-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .h-dot {
+            width: 16px;
+            height: 16px;
+            background: #222;
+            border-radius: 3px;
+        }
+
+        /* Модалки */
+        .modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: flex-end;
+            z-index: 1000;
+        }
+
+        .modal-body {
+            background: var(--modal-bg);
+            width: 100%;
+            border-radius: 25px 25px 0 0;
+            padding: 30px 20px;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Навігація */
+        nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #121212;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            border-top: 1px solid #333;
+            z-index: 100;
+        }
+
+        .nav-link {
+            color: var(--text-gray);
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            gap: 4px;
+        }
+
+        .nav-link.active {
+            color: var(--purple);
+        }
+
+        .nav-link i {
+            font-size: 22px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1 style="margin:0; font-size: 30px;">MyStat</h1>
+        <div class="h-icons">
+            <i class="fa-solid fa-gift" style="color:var(--gold)"></i>
+            <i class="fa-solid fa-table-cells-large"></i>
+            <i class="fa-solid fa-bell"></i>
+            <div class="profile-pic"><img src="./assets/cc7377ed5600f34bf90b62110bbbea05.jpg" style="width:100%"></div>
+        </div>
+    </header>
+
+    <div class="top-cards">
+        <div class="t-card p">
+            <div class="num">4</div>
+            <div class="txt">Завдання<br>до виконання</div>
+        </div>
+        <div class="t-card o">
+            <div class="num">1</div>
+            <div class="txt">Завдань<br>протерміновано</div>
+        </div>
+    </div>
+
+    <!-- БЛОК ОЦІНКИ (ПОВНИЙ) -->
+    <div class="section">
+        <div class="title">Оцінки <i class="fa-solid fa-table-cells" style="color:var(--purple)"></i></div>
+
+        <div class="month-label">Лютий</div>
+        <div class="grades-grid">
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(12)">12</div>
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--pink)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(10)">10</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(12)">12</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(12)">12</div>
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(10)">10</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(10)">10</div>
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(10)">10</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(10)">10</div>
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--purple)" onclick="openGrade(11)">11</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(10)">10</div>
+            <div class="g-box" style="background:var(--blue)" onclick="openGrade(10)">10</div>
+        </div>
+
+        <div class="month-label">Січень</div>
+        <div class="grades-grid">
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">1</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--purple)">11</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+        </div>
+
+        <div class="month-label">Грудень</div>
+        <div class="grades-grid">
+            <div class="g-box" style="background:var(--orange)">11</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--orange)">12</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">11</div>
+            <div class="g-box" style="background:var(--blue)">11</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">11</div>
+        </div>
+
+        <div class="month-label">Листопад</div>
+        <div class="grades-grid">
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+            <div class="g-box" style="background:var(--blue)">10</div>
+            <div class="g-box" style="background:var(--blue)">12</div>
+        </div>
+    </div>
+
+    <!-- СЕРЕДНІЙ БАЛ ТА ГРАФІК -->
+    <div class="section">
+        <div class="title">Середній бал <span
+                style="font-size:12px; font-weight:normal; background:#2c2c2e; padding:4px 10px; border-radius:10px;">Рік
+                <i class="fa-solid fa-chevron-down" style="font-size:10px"></i></span></div>
+        <div class="avg-grid">
+            <div class="avg-card" style="border-left-color: var(--blue)">
+                <div class="avg-num">10.6</div>
+                <div class="avg-lbl"><span class="dot" style="background:var(--blue)"></span> Самостійна робота</div>
+            </div>
+            <div class="avg-card" style="border-left-color: #8e44ad">
+                <div class="avg-num">11.3</div>
+                <div class="avg-lbl"><span class="dot" style="background:#8e44ad"></span> Класна робота</div>
+            </div>
+            <div class="avg-card" style="border-left-color: var(--pink)">
+                <div class="avg-num">11</div>
+                <div class="avg-lbl"><span class="dot" style="background:var(--pink)"></span> Тематична</div>
+            </div>
+            <div class="avg-card" style="border-left-color: var(--gold)">
+                <div class="avg-num">0</div>
+                <div class="avg-lbl"><span class="dot" style="background:var(--gold)"></span> Контрольні</div>
+            </div>
+        </div>
+
+        <div class="graph-wrap">
+            <svg class="graph-svg" viewBox="0 0 400 120" preserveAspectRatio="none">
+                <line x1="0" y1="20" x2="400" y2="20" stroke="#222" stroke-width="1" />
+                <line x1="0" y1="50" x2="400" y2="50" stroke="#222" stroke-width="1" />
+                <line x1="0" y1="80" x2="400" y2="80" stroke="#222" stroke-width="1" />
+                <line x1="0" y1="110" x2="400" y2="110" stroke="#222" stroke-width="1" />
+                <!-- Синя лінія -->
+                <path d="M 30 40 Q 110 65, 190 40 T 370 65" fill="none" stroke="var(--blue)" stroke-width="3" />
+                <circle cx="30" cy="40" r="3" fill="white" />
+                <circle cx="110" cy="65" r="3" fill="white" />
+                <circle cx="190" cy="40" r="3" fill="white" />
+                <circle cx="280" cy="40" r="3" fill="white" />
+                <circle cx="370" cy="65" r="3" fill="white" />
+                <!-- Фіолетова лінія -->
+                <line x1="30" y1="30" x2="370" y2="30" stroke="#8e44ad" stroke-width="3" />
+            </svg>
+            <div class="graph-months"><span>жов</span><span>лис</span><span>гру</span><span>січ</span><span>лют</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ВІДВІДУВАНІСТЬ (ТОЧНА КОПІЯ) -->
+    <div class="section" onclick="openAtt()">
+        <div class="title">Відвідуваність <span style="font-size:11px; color:var(--text-gray); font-weight:normal;">за
+                30 днів</span></div>
+        <div class="att-cards">
+            <div class="att-card" style="background:#26262b">
+                <div class="att-val">74% <i class="fa-solid fa-arrow-trend-down trend-icon"></i></div>
+                <div class="att-lbl"><span class="dot" style="background:#8e44ad"></span> Відвідування</div>
+            </div>
+            <div class="att-card" style="background:var(--red-absent)">
+                <div class="att-val">26%</div>
+                <div class="att-lbl"><span class="dot" style="background:#e67e22"></span> Пропуск</div>
+            </div>
+            <div class="att-card" style="background:var(--yellow-late)">
+                <div class="att-val">0% <i class="fa-solid fa-arrow-trend-down trend-icon"></i></div>
+                <div class="att-lbl"><span class="dot" style="background:var(--gold)"></span> Спізнення</div>
+            </div>
+        </div>
+        <div class="heatmap-wrap">
+            <div class="h-month">
+                <div style="color:var(--text-gray); font-size:12px">Січень</div>
+                <div class="h-grid">
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot" style="background:#e67e22"></div>
+                    <div class="h-dot" style="background:#e67e22"></div>
+                </div>
+            </div>
+            <div class="h-month">
+                <div style="color:var(--text-gray); font-size:12px">Лютий</div>
+                <div class="h-grid">
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot" style="background:#e67e22"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot"></div>
+                    <div class="h-dot" style="background:#e67e22"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot" style="background:var(--purple)"></div>
+                    <div class="h-dot style=" background:#e67e22""></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛКИ -->
+    <div id="mGrade" class="modal" onclick="this.style.display='none'">
+        <div class="modal-body" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div style="width:75%;">
+                    <div style="font-weight:bold; font-size:17px;">Програмування з використанням мови C++</div>
+                    <div style="color:var(--text-gray); font-size:14px; margin-top:5px;">10 лютого 2026</div>
+                </div>
+                <div id="mNum"
+                    style="background:var(--purple); width:45px; height:45px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:bold;">
+                    11</div>
+            </div>
+            <div style="margin-top:25px;">
+                <div style="font-weight:500;">Препроцесор у додатках</div>
+                <div style="display:flex; align-items:center; gap:10px; margin-top:15px;">
+                    <div style="width:30px; height:30px; background:#444; border-radius:50%;"></div><span
+                        style="color:var(--text-gray); font-size:14px;">Іванова Людмила</span>
+                </div>
+            </div>
+            <div
+                style="background:var(--purple); padding:10px 25px; border-radius:20px; display:inline-block; margin-top:25px; font-size:14px;">
+                Класна робота</div>
+        </div>
+    </div>
+
+    <div id="mAtt" class="modal" onclick="this.style.display='none'">
+        <div class="modal-body" onclick="event.stopPropagation()">
+            <div class="title">Відвідуваність за лютий</div>
+            <div style="color:var(--text-gray); font-size:14px;">Пропуски: <span style="color:white">8</span> &nbsp;
+                Запізнення: <span style="color:white">0</span></div>
+            <div
+                style="margin-top:20px; background:#2c2c2e; padding:15px; border-radius:15px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="font-weight:bold; font-size:14px;">Програмування C++</div>
+                    <div style="font-size:12px; color:var(--text-gray)">Структури (част. 1)</div>
+                </div>
+                <div
+                    style="background:var(--red-absent); color:#ff3b30; padding:5px 12px; border-radius:8px; font-size:12px; font-weight:bold;">
+                    Пропуск</div>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <a href="#" class="nav-link active"><i class="fa-solid fa-graduation-cap"></i><span>Головна</span></a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-list-check"></i><span>Завдання</span></a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-calendar-days"></i><span>Розклад</span></a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-wallet"></i><span>Оплата</span></a>
+        <a href="#" class="nav-link"><i class="fa-solid fa-ellipsis"></i><span>Інше</span></a>
+    </nav>
+
+    <script>
+        function openGrade(val) { document.getElementById('mNum').innerText = val; document.getElementById('mGrade').style.display = 'flex'; }
+        function openAtt() { document.getElementById('mAtt').style.display = 'flex'; }
+    </script>
+</body>
+
+</html>
